@@ -12,6 +12,7 @@ Goal: Reach the entrance to heaven and build a stairway to heaven's gates before
 The user wins if they reach heaven's gates, and loses if they are sent to hell.
 
 Mechanics: The user will be able to move right, move left, and jump (gravity is present). The games is broken into two stages as follows.
+
 	Stage 1:
 		The user starts at the center of the screen and "darkness" starts at the far left.
 		Darkness slowly moves toward the right and the user should move right to keep ahead of the darkness.
@@ -30,3 +31,5 @@ Mechanics: The user will be able to move right, move left, and jump (gravity is 
 		Then a short timer will begin and the user will need to jump from block to block to reach the entrance to heaven.
 		If a user lands on a temporary block, it will disappear after a short time interval.
 		If the timer runs out, the user will be sent to hell because they are unworthy.
+
+End of file.
