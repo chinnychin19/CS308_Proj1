@@ -320,11 +320,6 @@ public abstract class StdGame extends JGEngine {
 	 * After the LifeLost
 	 * sequence, goes to InGame or GameOver, depending on lives left. */
 	public final void lifeLost() {
-		if (!inGameState("InGame") || inGameState("LevelDone")
-		|| inGameState("LifeLost") || inGameState("GameOver") ) return;
-		//	System.err.println(
-		//	"Warning: lifeLost() called from other state than InGame." );
-		//}
 		clearKey(key_continuegame);
 		removeGameState("StartLevel");
 		removeGameState("StartGame");
