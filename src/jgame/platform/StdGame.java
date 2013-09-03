@@ -127,7 +127,7 @@ public abstract class StdGame extends JGEngine {
 	* Can be used to time animations etc. */
 	public double timer=0;
 	/** Player score; starts at 0 at beginning of game. */
-	public int score=0;
+	public int items=0;
 	/** Difficulty level; starts at 0 at beginning of game.  Can be
 	 * incremented each time a level is complete. Can be used to determine game
 	 * difficulty settings throughout the game.  */
@@ -287,7 +287,7 @@ public abstract class StdGame extends JGEngine {
 	public void initNewGame() {
 		level=0;
 		stage=0;
-		score=0;
+		items=0;
 		lives=initial_lives;
 	}
 	/** Initialise play specifically after a new life is introduced (that is,
@@ -429,7 +429,7 @@ public abstract class StdGame extends JGEngine {
 		seqtimer=0;
 		clearKey(key_startgame);
 		if (highscores!=null
-		&&  Highscore.findPos(highscores,score)>=0 ) {
+		&&  Highscore.findPos(highscores,items)>=0 ) {
 			setGameState("EnterHighscore");
 		} else {
 			setGameState("Title");
@@ -588,7 +588,7 @@ public abstract class StdGame extends JGEngine {
 			playername = playername.substring(0,playername.length()-1);
 		if (key==KeyEnter) {
 			highscores = Highscore.insert(highscores,
-					new Highscore(score,playername));
+					new Highscore(items,playername));
 			clearLastKey();
 			clearKey(KeyEnter);
 			saveHighscores();
@@ -679,7 +679,7 @@ public abstract class StdGame extends JGEngine {
 	public void paintFrame() {
 		setFont(status_font);
 		setColor(status_color);
-		drawString("Score "+score,status_l_margin,0,-1);
+		drawString("Items "+items,status_l_margin,0,-1);
 		if (lives_img==null) {
 			drawString("Lives "+lives,viewWidth()-status_r_margin,0,1);
 		} else {
@@ -743,7 +743,7 @@ public abstract class StdGame extends JGEngine {
 		drawString(highscore_entry,
 			viewWidth()/2,viewHeight()/3,0,highscore_title_font,
 				highscore_title_color);
-		drawString(""+score,
+		drawString(""+items,
 			viewWidth()/2,viewHeight()/2,0,highscore_font,highscore_color);
 		drawString(playername+"|",
 			viewWidth()/2,2*viewHeight()/3,0,highscore_font,highscore_color);

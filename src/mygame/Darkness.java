@@ -8,8 +8,9 @@ public class Darkness extends JGObject {
 	private StairwayToHeaven game;
 	private int grayLevel, grayIncrement;
 	public Darkness(StairwayToHeaven game, double x, double y, double w, double h) {
-		super("darkness", true, x, y, Constants.DARKNESS_CID, null, 0, 0, 0, 0, -2);
+		super("darkness", true, x, y, Constants.DARKNESS_CID, null, -2);
 		// I don't know what expiry is, but example code used -2
+		setBBox(0, 0, width, height);
 		width = w;
 		height = h;
 		xdir = 1;
@@ -29,6 +30,7 @@ public class Darkness extends JGObject {
 		if (x + width < darknessHandicapX) {
 			x = darknessHandicapX - width;
 		}
+		setBBox(0, 0, width, height);		
 	}
 	
 	public void paint() {
@@ -37,5 +39,13 @@ public class Darkness extends JGObject {
 		grayLevel+= grayIncrement;
 		game.setColor(new JGColor(grayLevel, grayLevel, grayLevel));
 		game.drawRect(x,y,width,height,true,false);
+	}
+	
+	public void hit(JGObject obj) {
+		if (obj.colid == Constants.ITEM_CID) {
+			obj.remove();
+		} else if (obj.colid == Constants.PLAYER_CID) {
+			game.lifeLost();
+		}
 	}
 }

@@ -206,6 +206,9 @@ public class JGObject {
 	public void setBBox(int x,int y, int width,int height) {
 		bbox = new JGRectangle(x,y,width,height);
 	}
+	public void setBBox(double x, double y, double w, double h) {
+		bbox = new JGRectangle((int)x,(int)y,(int)w,(int)h);
+	}
 	/** Clear bbox definition so that we use the image bbox again. */
 	public void clearBBox() { bbox=null; }
 

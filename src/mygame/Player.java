@@ -11,7 +11,7 @@ public class Player extends JGObject {
 				x,
 				y,
 				Constants.PLAYER_CID,
-				"human1",
+				"bat1",
 				0,
 				0,
 				speed,
@@ -45,6 +45,9 @@ public class Player extends JGObject {
 		else if (obj.colid == Constants.PLATFORM_CID) {
 			isJumping = false;
 			y = obj.y - tileheight; //touching a tile will push the user on top of it
+		} else if (obj.colid == Constants.ITEM_CID) {
+			obj.remove();
+			game.items++;
 		}
 	}
 }
