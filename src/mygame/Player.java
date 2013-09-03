@@ -15,7 +15,8 @@ public class Player extends JGObject {
 				0,
 				0,
 				speed,
-				speed,-1);
+				speed,
+				-1);
 		ydir = -1;
 		isJumping = false;
 		this.game = game;
@@ -41,13 +42,22 @@ public class Player extends JGObject {
 		yspeed = Constants.JUMP_SPEED;
 	}
 	public void hit(JGObject obj) {
-		if (obj.colid == Constants.FIREBALL_CID) game.lifeLost();
-		else if (obj.colid == Constants.PLATFORM_CID) {
+		if (obj.colid == Constants.FIREBALL_CID) {
+			game.goToHell();
+		} else if (obj.colid == Constants.PLATFORM_CID) {
 			isJumping = false;
 			y = obj.y - tileheight; //touching a tile will push the user on top of it
+			if (((Platform)obj).canFall()) {
+				obj.ydir = 1;
+				obj.yspeed = Constants.PLATFORM_FALL_SPEED;
+			}
 		} else if (obj.colid == Constants.ITEM_CID) {
 			obj.remove();
 			game.items++;
+		} else if (obj.colid == Constants.HEAVEN_CID) {
+			game.winGame();
+		} else if (obj.colid == Constants.DARKNESS_CID) {
+			game.goToHell();
 		}
 	}
 }

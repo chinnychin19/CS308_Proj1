@@ -233,3 +233,5 @@ planer			?	0	icons_map	94		r
 chopperl		chopperl1;chopperl2		0.5
 chopperr		chopperr1;chopperr2		0.5
 
+# Sounds
+themesong		ObstacleCourse.wav

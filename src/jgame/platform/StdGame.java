@@ -417,9 +417,7 @@ public abstract class StdGame extends JGEngine {
 		seqtimer=0;
 		if (gameover_ticks > 0) {
 			if (gameover_ingame) addGameState("GameOver");
-			else                 setGameState("GameOver");
-			new JGTimer(gameover_ticks,true,"GameOver") {
-				public void alarm() { gotoTitle(); } };
+			else setGameState("GameOver");
 		} else {
 			gotoTitle();
 		}

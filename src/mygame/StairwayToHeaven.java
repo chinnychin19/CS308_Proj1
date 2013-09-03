@@ -1,12 +1,14 @@
 package mygame;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import jgame.*;
 import jgame.platform.*;
 
 public class StairwayToHeaven extends StdGame {
 	private Player player;
-	private Darkness darkness;
+	private boolean reachedHeaven, fireBallsFalling;
 	private int frames;
 	
 	public static void main(String[]args) {
@@ -22,11 +24,6 @@ public class StairwayToHeaven extends StdGame {
 		return player;
 	}
 	
-	public void startGameOver() {
-		print("startGameOver");
-		removeObjects(null,0); 
-	}
-	
 	public void initCanvas() {
 		print("initCanvas");
 		setCanvasSettings(Constants.nrtilesx, Constants.nrtilesy,
@@ -40,6 +37,8 @@ public class StairwayToHeaven extends StdGame {
 		defineMedia("mygame.tbl");
 		setFrameRate(45,1);
 		setGameState(Constants.STATE_TITLE);
+		reachedHeaven = false;
+		playAudio("music", "themesong", true);
 	}
 	
 	public void print(Object o) {
@@ -49,9 +48,11 @@ public class StairwayToHeaven extends StdGame {
 	public void initNewLife() {
 		print("initNewLife()");
 		removeObjects(null,0);
+		items = 0;
+		fireBallsFalling = true;
 		setPFSize(Constants.PF_HORIZONTAL_TILES_PART1, Constants.PF_VERTICAL_TILES_PART1);
 		player = new Player(this, Constants.PLAYER_START_X, Constants.PLAYER_START_Y, Constants.PLAYER_SPEED);
-		darkness = new Darkness(this, Constants.PLAYER_START_X-viewWidth(), Constants.TOP_MARGIN, 
+		new Darkness(this, Constants.PLAYER_START_X-viewWidth(), Constants.TOP_MARGIN, 
 				viewWidth()/2, viewHeight());
 		frames = 0;
 		makeStage();
@@ -83,8 +84,11 @@ public class StairwayToHeaven extends StdGame {
 			}
 		}
 	}
-
-
+	
+	public void goToHell() {
+		lifeLost();
+	}
+	
 	//Start of Title stage methods
 	public void paintFrameTitle() {
 		double firstTextHeight = 40;
@@ -101,7 +105,7 @@ public class StairwayToHeaven extends StdGame {
 			setGameState(Constants.STATE_STARTGAME);
 			addGameState(Constants.STATE_INGAME);
 			// set a timer to remove the StartGame state after a few seconds,
-			new JGTimer(70, true, Constants.STATE_STARTGAME) {
+			new JGTimer(Constants.STARTGAMEDELAY, true, Constants.STATE_STARTGAME) {
 				public void alarm() {
 					removeGameState(Constants.STATE_STARTGAME);
 				}
@@ -112,7 +116,7 @@ public class StairwayToHeaven extends StdGame {
 
 	//Start of StartGame stage methods
 	public void paintFrameStartGame() {
-		drawString("GO!",viewWidth()/2,90,0);
+		drawString("GO!",viewWidth()/2,viewHeight()/2,0);
 	}
 	//End of StartGame stage methods
 
@@ -120,38 +124,50 @@ public class StairwayToHeaven extends StdGame {
 	public void startInGame() {
 		print("startInGame()");
 	}
-			
-	public void doFrameInGame() {
-		if (getKey('C')) { //Cheat code: SHIFT+C
-			clearKey('C');
-			//TODO: cheat code
-			items = 10;
-			beginBuildStage();
+	
+	public void checkCheats() {
+		if (getKey('B')) { //advance to build stage with 20 items
+			clearKey('B');
+			items = Constants.CHEAT_ITEMS;
+			beginBuilding();
 		}
-		
-		setViewOffset((int)player.x, (int)player.y, true); //pans screen with player
-		frames++;
-		moveObjects();
-		
+		if (getKey('D')) { //destroy the darkness 
+			clearKey('D');
+			removeObjects(null, Constants.DARKNESS_CID);
+		}
+		if (getKey('F')) { //turn off fireballs
+			fireBallsFalling = false;
+		}
+	}
+	
+	public void checkInGameCollisions() {
 		checkCollision(Constants.FIREBALL_CID, Constants.PLAYER_CID);
 		checkCollision(Constants.PLATFORM_CID, Constants.PLAYER_CID);
 		checkCollision(Constants.ITEM_CID, Constants.PLAYER_CID);
+		checkCollision(Constants.DARKNESS_CID, Constants.PLAYER_CID);
 		checkCollision(Constants.FIREBALL_CID, Constants.PLATFORM_CID);
 		checkCollision(Constants.ITEM_CID, Constants.DARKNESS_CID);
-		checkCollision(Constants.PLAYER_CID, Constants.DARKNESS_CID);
+	}
+	
+	public void doFrameInGame() {		
+		frames++;
+		setViewOffset((int)player.x, (int)player.y, true); //pans screen with player
+		moveObjects();
+		checkCheats();
+		checkInGameCollisions();
 		
 		if (player.x > this.pfWidth() - JGObject.tilewidth ) {
-			beginBuildStage();
+			beginBuilding();
 		}  else if (player.y > viewHeight()) {
-			lifeLost(); //plummeted to hell
+			goToHell();
 		}
 		
-		if (frames % Constants.FIREBALL_PERIOD == 0)
+		if (fireBallsFalling && frames % Constants.FIREBALL_PERIOD == 0)
 			new Fireball(this);
 	}
 	//End of InGame stage methods
 	
-	public void beginBuildStage() {
+	public void beginBuilding() {
 		setGameState(Constants.STATE_BUILDINFO);
 	}
 
@@ -188,7 +204,7 @@ public class StairwayToHeaven extends StdGame {
 	//End of BuildInfo stage methods
 
 	//Start of InBuild stage methods
-	private Platform tempBlock1, tempBlock2;
+	private Platform tempBlock1, tempBlock2; //blocks that user will place on playing field
 	public void startInBuild() {
 		print("startInBuild()");
 		removeObjects(null,0);
@@ -212,29 +228,34 @@ public class StairwayToHeaven extends StdGame {
 		if (getKey(KeyEnter)) {
 			clearKey(KeyEnter);
 			items--;
-			tempBlock1 = new Platform(tempBlock1.x, tempBlock1.y);
-			tempBlock2 = new Platform(tempBlock2.x, tempBlock2.y);
+			tempBlock1 = new Platform(tempBlock1.x, tempBlock1.y, true);
+			tempBlock2 = new Platform(tempBlock2.x, tempBlock2.y, true);
 		}
+		moveTempBlocks();
+		checkCollision(Constants.HEAVEN_CID, Constants.PLAYER_CID);
+	}
+	public void moveTempBlocks() {
+		double dx = 0, dy = 0;
 		if (getKey(KeyUp)) {
 			clearKey(KeyUp);
-			tempBlock1.y -= Constants.PLATFORM_SPEEDY;
-			tempBlock2.y -= Constants.PLATFORM_SPEEDY;
+			dy = -1*Constants.PLATFORM_SPEEDY;
 		}
 		if (getKey(KeyDown)) {
 			clearKey(KeyDown);
-			tempBlock1.y += Constants.PLATFORM_SPEEDY;
-			tempBlock2.y += Constants.PLATFORM_SPEEDY;
+			dy = Constants.PLATFORM_SPEEDY;
 		}
 		if (getKey(KeyLeft)) {
 			clearKey(KeyLeft);
-			tempBlock1.x -= Constants.PLATFORM_SPEEDX;
-			tempBlock2.x -= Constants.PLATFORM_SPEEDX;
+			dx = -1*Constants.PLATFORM_SPEEDY;
 		}
 		if (getKey(KeyRight)) {
 			clearKey(KeyRight);
-			tempBlock1.x += Constants.PLATFORM_SPEEDX;
-			tempBlock2.x += Constants.PLATFORM_SPEEDX;
+			dx = Constants.PLATFORM_SPEEDY;
 		}
+		tempBlock1.x+=dx;
+		tempBlock1.y+=dy;
+		tempBlock2.x+=dx;
+		tempBlock2.y+=dy;
 	}
 	//End of InBuild stage methods
 	
@@ -242,6 +263,34 @@ public class StairwayToHeaven extends StdGame {
 	public void doFrameStairway() {
 		moveObjects();
 		checkCollision(Constants.PLATFORM_CID, Constants.PLAYER_CID);
+		checkCollision(Constants.HEAVEN_CID, Constants.PLAYER_CID);
+		if (player.y > viewHeight()) {
+			goToHell();
+		}
 	}
-	//End of Stairway stage methods	
+	public void paintFrameStairway() {
+		//Present at bottom of screen
+		drawString("Jump to heaven!", viewWidth()/2, Constants.PLAYER_START_Y+JGObject.tileheight*2,0);
+	}
+	//End of Stairway stage methods
+	
+	public void winGame() {
+		reachedHeaven = true;
+		setGameState(Constants.STATE_GAMEOVER);
+	}
+	
+	//Start of GameOver stage methods
+	public void startGameOver() {
+		removeObjects(null,0);
+	}
+	public void paintFrameGameOver() {
+		String message = reachedHeaven ? "YOU WIN!!! :)" : "YOU LOSE... :(";
+		drawString(message, viewWidth()/2, viewHeight()/2, 0);
+	}
+	public void doFrameGameOver() {
+		if (getKey(KeyEsc)) {
+			System.exit(0);
+		}
+	}
+	//End of GameOver stage methods
 }

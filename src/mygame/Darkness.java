@@ -14,7 +14,7 @@ public class Darkness extends JGObject {
 		width = w;
 		height = h;
 		xdir = 1;
-		xspeed = 1;
+		xspeed = Constants.DARKNESS_XSPEED;
 		grayLevel = 0;
 		grayIncrement = 1;
 		this.game = game;
@@ -44,8 +44,6 @@ public class Darkness extends JGObject {
 	public void hit(JGObject obj) {
 		if (obj.colid == Constants.ITEM_CID) {
 			obj.remove();
-		} else if (obj.colid == Constants.PLAYER_CID) {
-			game.lifeLost();
 		}
 	}
 }
