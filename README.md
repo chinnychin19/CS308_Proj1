@@ -14,7 +14,9 @@ The user wins if they reach heaven, and loses otherwise -- whether by falling, b
 
 Mechanics: The user will be able to move right, move left, and jump (gravity is present).
 Gravity only affects the user if he/she jumps. If he/she walk off a platform, he/she will fall but not at an accelerating rate.
-This will make it easier to avoid dying by falling of platforms.
+The user may jump exactly once at a time. To regain the jump, the user must touch a platform.
+(Note that this means, that a user that walks off a platform may still jump off of thin air. This helps prevent quick deaths.)
+A final physics note: the user may jump through a platform from beneath it. If this happens he/she will snap to the upper surface of the platform.
 
 The games is broken into two stages as follows:
 	Stage 1:
