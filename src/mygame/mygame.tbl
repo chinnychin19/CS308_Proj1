@@ -1,3 +1,8 @@
+# JGame has a bug that causes the splash image to never go away when I am in side scrolling mode.
+splash_image	-	0	splash.png	-
+
+themesong		ObstacleCourse.wav
+
 icons_map		icons8x8-d-tr.gif		0	0	8	8	0	0
 
 #Geometric
@@ -232,6 +237,3 @@ planer			?	0	icons_map	94		r
 
 chopperl		chopperl1;chopperl2		0.5
 chopperr		chopperr1;chopperr2		0.5
-
-# Sounds
-themesong		ObstacleCourse.wav

@@ -2,6 +2,9 @@ package jgame.platform;
 import jgame.*;
 import java.awt.*;
 import javax.swing.JOptionPane;
+
+import mygame.Constants;
+
 import java.awt.event.*;
 import java.io.*;
 /** A basic framework for a game.  It supports an animation and game timer,
@@ -139,7 +142,7 @@ public abstract class StdGame extends JGEngine {
 	/** Lives count, 0 means game over.  */
 	public int lives=0;
 	/** Initial value for lives; default=4 */
-	public int initial_lives=4;
+	public int initial_lives=Constants.USER_LIVES;
 
 	/** Number of ticks to stay in StartLevel/StartGame state, 0 = skip */
 	public int startgame_ticks=80;

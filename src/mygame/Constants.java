@@ -6,11 +6,10 @@ public class Constants {
 	//Stage constants
 	public static final int WIDTH_FACTOR = 3, HEIGHT_FACTOR = 2;
 	public static final String STAGE_STRING = "00000000000"+
-			"00000234560002200040300001230044040004030000123004400040300001230044"+
-			"00000234560002200234560002200234560002200023462736522736473625200000";
+			"000002345600022000403000012300440400040300001230044000403000012300000";
 	public static final int PF_VERTICAL_TILES_PART1 = 24, 
 			PF_HORIZONTAL_TILES_PART1 = STAGE_STRING.length() * WIDTH_FACTOR;
-	
+	public static final int USER_LIVES = 7;
 	//Collision constants
 	public static final int PLAYER_CID = 1, FIREBALL_CID = 2, DARKNESS_CID = 4,
 			ITEM_CID = 8, PLATFORM_CID = 16, HEAVEN_CID = 32;
@@ -40,7 +39,7 @@ public class Constants {
 	public static final int bgcolorR = 80, bgcolorG = 250, bgcolorB = 91;
 	
 	//Item constants
-	public static final int MIN_ITEM_STEPS = 5, MAX_ITEM_STEPS = 20;
+	public static final int MIN_ITEM_STEPS = 5, MAX_ITEM_STEPS = 15;
 	public static final int CHEAT_ITEMS = 20;
 	
 	//Stage name constants

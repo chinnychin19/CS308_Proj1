@@ -11,7 +11,7 @@ public class Player extends JGObject {
 				x,
 				y,
 				Constants.PLAYER_CID,
-				"bat1",
+				"bat",
 				0,
 				0,
 				speed,

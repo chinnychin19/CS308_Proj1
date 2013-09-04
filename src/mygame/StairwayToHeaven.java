@@ -25,7 +25,6 @@ public class StairwayToHeaven extends StdGame {
 	}
 	
 	public void initCanvas() {
-		print("initCanvas");
 		setCanvasSettings(Constants.nrtilesx, Constants.nrtilesy,
 				Constants.tilex, Constants.tiley, 
 				null, 
@@ -36,9 +35,18 @@ public class StairwayToHeaven extends StdGame {
 	public void initGame() {
 		defineMedia("mygame.tbl");
 		setFrameRate(45,1);
+		setupFonts();
 		setGameState(Constants.STATE_TITLE);
 		reachedHeaven = false;
 		playAudio("music", "themesong", true);
+		lives = Constants.USER_LIVES;
+	}
+	
+	public void setupFonts() {
+		status_font = new JGFont("Chiller", 0, 14);
+		title_font = new JGFont("Chiller", 0, 14);
+		status_color = JGColor.red;
+		title_color = JGColor.red;
 	}
 	
 	public void print(Object o) {
@@ -46,7 +54,6 @@ public class StairwayToHeaven extends StdGame {
 	}
 	
 	public void initNewLife() {
-		print("initNewLife()");
 		removeObjects(null,0);
 		items = 0;
 		fireBallsFalling = true;
@@ -93,7 +100,7 @@ public class StairwayToHeaven extends StdGame {
 	public void paintFrameTitle() {
 		double firstTextHeight = 40;
 		double interval = 25;
-		drawString("\"BAT OUT OF HELL\"", viewWidth()/2, firstTextHeight, 0);
+		drawString("\"STAIRWAY TO HEAVEN\"", viewWidth()/2, firstTextHeight, 0);
 		drawString("Hell is chasing you!", viewWidth()/2, firstTextHeight + interval, 0);
 		drawString("Avoid fireballs and pick up items!", viewWidth()/2, firstTextHeight + 2*interval, 0);
 		drawString("(Press spacebar to begin)", viewWidth()/2, firstTextHeight + 4*interval, 0);
@@ -121,10 +128,6 @@ public class StairwayToHeaven extends StdGame {
 	//End of StartGame stage methods
 
 	//Start of InGame stage methods
-	public void startInGame() {
-		print("startInGame()");
-	}
-	
 	public void checkCheats() {
 		if (getKey('B')) { //advance to build stage with 20 items
 			clearKey('B');
@@ -173,7 +176,6 @@ public class StairwayToHeaven extends StdGame {
 
 	//Start of BuildInfo stage methods
 	public void startBuildInfo() {
-		print("startBuildInfo()");
 		lives = 1;
 		removeObjects(null,0);
 		setPFSize(viewWidth(), viewHeight());
@@ -183,9 +185,9 @@ public class StairwayToHeaven extends StdGame {
 		String congrats = "CONGRATULATIONS! (you are not done)";
 		String dir1 = "Use arrow keys to position items.";
 		String dir2 = "Place items with spacebar.";
-		String dir3 = "Items will sink when you touch them.";
+		String dir3 = "Items will fall when you touch them.";
 		String dir4 = "Reach heaven to win! (One life)";
-		String dir5 = "Press spacebar to continue";
+		String dir5 = "Press spacebar to continue...";
 		double dirYStart = 70;
 		double interval = 20;
 		drawString(congrats,viewWidth()/2,dirYStart-interval,0);
@@ -206,7 +208,6 @@ public class StairwayToHeaven extends StdGame {
 	//Start of InBuild stage methods
 	private Platform tempBlock1, tempBlock2; //blocks that user will place on playing field
 	public void startInBuild() {
-		print("startInBuild()");
 		removeObjects(null,0);
 		player = new Player(this, 0, Constants.PLAYER_START_Y, Constants.PLAYER_SPEED);
 		new Platform(player.x, player.y+JGObject.tileheight); //Platform under player
@@ -215,8 +216,8 @@ public class StairwayToHeaven extends StdGame {
 		new Platform(viewWidth()-2*JGObject.tilewidth, 
 				Constants.HEAVEN_Y+JGObject.tileheight); //Platforms under heaven
 		new Heaven(viewWidth()-2*JGObject.tilewidth, Constants.HEAVEN_Y);
-		tempBlock1 = new Platform(viewWidth()/2, viewHeight()/2);
-		tempBlock2 = new Platform(viewWidth()/2+JGObject.tilewidth, viewHeight()/2);
+		tempBlock1 = new Platform(viewWidth()/2, viewHeight()/2, true);
+		tempBlock2 = new Platform(viewWidth()/2+JGObject.tilewidth, viewHeight()/2, true);
 	}
 			
 	public void doFrameInBuild() {
@@ -225,8 +226,8 @@ public class StairwayToHeaven extends StdGame {
 			tempBlock2.remove();
 			setGameState(Constants.STATE_STAIRWAY);
 		}
-		if (getKey(KeyEnter)) {
-			clearKey(KeyEnter);
+		if (getKey(' ')) {
+			clearKey(' ');
 			items--;
 			tempBlock1 = new Platform(tempBlock1.x, tempBlock1.y, true);
 			tempBlock2 = new Platform(tempBlock2.x, tempBlock2.y, true);
@@ -267,6 +268,11 @@ public class StairwayToHeaven extends StdGame {
 		if (player.y > viewHeight()) {
 			goToHell();
 		}
+		if (player.x > viewWidth() - JGObject.tilewidth) {
+			player.x = viewWidth() - JGObject.tilewidth;
+		} else if (player.x < 0) {
+			player.x = 0;
+		}
 	}
 	public void paintFrameStairway() {
 		//Present at bottom of screen
@@ -286,6 +292,8 @@ public class StairwayToHeaven extends StdGame {
 	public void paintFrameGameOver() {
 		String message = reachedHeaven ? "YOU WIN!!! :)" : "YOU LOSE... :(";
 		drawString(message, viewWidth()/2, viewHeight()/2, 0);
+		drawString("(spacebar for title menu)", viewWidth()/2, viewHeight()/2+40, 0);
+		
 	}
 	public void doFrameGameOver() {
 		if (getKey(KeyEsc)) {
